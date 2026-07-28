@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.librarysystem.mapper.CategoryMapper">
+
+    <select id="selectById" resultType="com.example.librarysystem.entity.Category">
+        SELECT id, name, create_time
+        FROM category
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultType="com.example.librarysystem.entity.Category">
+        SELECT id, name, create_time
+        FROM category
+        ORDER BY id
+    </select>
+
+    <insert id="insert" parameterType="com.example.librarysystem.entity.Category" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO category(name)
+        VALUES(#{name})
+    </insert>
+
+    <update id="update">
+        UPDATE category
+        SET name = #{name}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM category WHERE id = #{id}
+    </delete>
+</mapper>

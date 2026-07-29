@@ -1,0 +1,5 @@
+name: Globals
+values:
+  - key: Headers
+    value: ''
+    enabled: true

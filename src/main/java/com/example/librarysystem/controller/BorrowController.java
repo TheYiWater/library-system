@@ -19,7 +19,7 @@ public class BorrowController {
 
     @PostMapping
     public Result<Void> borrow(
-            @RequestParam Long userId,
+            @RequestAttribute("userId") Long userId,
             @RequestParam Long bookId) {
         borrowService.borrow(userId, bookId);
         return Result.success("借阅成功", null);
@@ -27,15 +27,15 @@ public class BorrowController {
 
     @PostMapping("/return")
     public Result<Void> returnBook(
-            @RequestParam Long userId,
+            @RequestAttribute("userId") Long userId,
             @RequestParam Long bookId,
             @RequestParam Long recordId) {
         borrowService.returnBook(userId, bookId, recordId);
         return Result.success("归还成功", null);
     }
 
-    @GetMapping("/records/{userId}")
-    public Result<List<BorrowRecord>> getUserRecords(@PathVariable Long userId) {
+    @GetMapping("/records")
+    public Result<List<BorrowRecord>> getUserRecords(@RequestAttribute("userId") Long userId) {
         return Result.success(borrowService.getUserRecords(userId));
     }
 }

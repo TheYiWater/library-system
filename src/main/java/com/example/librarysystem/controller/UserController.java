@@ -21,10 +21,16 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Result<User> login(@RequestParam String username, @RequestParam String password) {
+    public Result<java.util.Map<String, Object>> login(@RequestParam String username, @RequestParam String password) {
         User user = userService.login(username, password);
+        // 生成 JWT Token
+        String token = com.example.librarysystem.utils.JwtUtil.generate(user.getId(), user.getUsername(), user.getRole());
         user.setPassword(null);
-        return Result.success(user);
+
+        java.util.Map<String, Object> result = new java.util.HashMap<>();
+        result.put("token", token);
+        result.put("user", user);
+        return Result.success(result);
     }
 
     @PostMapping("/register")

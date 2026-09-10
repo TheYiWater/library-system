@@ -13,7 +13,15 @@ public interface BookMapper {
 
     int insert(Book book);
 
+    int update(Book book);
+
     int updateStock(@Param("id") Long id, @Param("delta") int delta);
 
     int deleteById(Long id);
+
+    List<Long> selectAllIds();
+
+    int count();
+
+    List<Book> listAll();
 }

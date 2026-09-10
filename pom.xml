@@ -76,6 +76,13 @@
             <version>4.4.0</version>
         </dependency>
 
+        <!-- Guava (BloomFilter 布隆过滤器,防缓存穿透) -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.0.0-jre</version>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

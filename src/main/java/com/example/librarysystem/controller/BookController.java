@@ -4,16 +4,22 @@ import com.example.librarysystem.common.PageResult;
 import com.example.librarysystem.common.Result;
 import com.example.librarysystem.entity.Book;
 import com.example.librarysystem.service.BookService;
+import com.example.librarysystem.service.StatisticsService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
 
     private final BookService bookService;
+    private final StatisticsService statisticsService;
 
-    public BookController(BookService bookService) {
+    public BookController(BookService bookService, StatisticsService statisticsService) {
         this.bookService = bookService;
+        this.statisticsService = statisticsService;
     }
 
     @GetMapping("/{id}")
@@ -30,9 +36,21 @@ public class BookController {
         return Result.success(bookService.search(title, author, page, size));
     }
 
+    @GetMapping("/hot")
+    public Result<List<Map<String, Object>>> hot() {
+        return Result.success(statisticsService.getHotBooks());
+    }
+
     @PostMapping
     public Result<Void> add(@RequestBody Book book) {
         bookService.add(book);
+        return Result.success(null);
+    }
+
+    @PutMapping("/{id}")
+    public Result<Void> update(@PathVariable Long id, @RequestBody Book book) {
+        book.setId(id);
+        bookService.update(book);
         return Result.success(null);
     }
 

@@ -36,4 +36,19 @@
         SET status = #{status}
         WHERE id = #{id}
     </update>
+
+    <update id="updateRole">
+        UPDATE user SET role = #{role} WHERE id = #{id}
+    </update>
+
+    <update id="updatePassword">
+        UPDATE user
+        SET password = #{password}
+        WHERE id = #{id}
+    </update>
+
+    <select id="count" resultType="int">SELECT COUNT(*) FROM user</select>
+    <select id="countAdmins" resultType="long">SELECT COUNT(*) FROM user WHERE role = 1</select>
+    <select id="listAll" resultType="com.example.librarysystem.entity.User">SELECT * FROM user</select>
+
 </mapper>

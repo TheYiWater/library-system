@@ -33,14 +33,14 @@ public class UserServiceImpl implements UserService {
         if (!password.equals(user.getPassword())) {
             throw new BusinessException(401, "用户名或密码错误");
         }
-        if (user.getStatus() != 1) {
+        if (user.getStatus() != null && user.getStatus() != 1) {
             throw new BusinessException(403, "账号已被禁用");
         }
         return user;
     }
 
     @Override
-    public void register(String username, String password, String realName) {
+    public void register(String username, String password, String nickname) {
         User exist = userMapper.selectByUsername(username);
         if (exist != null) {
             throw new BusinessException(400, "用户名已存在");
@@ -48,8 +48,28 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
-        user.setRealName(realName);
-        user.setRole("READER");
+        user.setRealName(nickname);  // 前端叫 nickname,数据库字段叫 realName
+        if (user.getRole() == null) {
+            user.setRole(0);
+        }
+        if (user.getStatus() == null) {
+            user.setStatus(1); // 1 = 正常
+        }
         userMapper.insert(user);
+    }
+
+    @Override
+    public void changePassword(Long userId, String oldPassword, String newPassword) {
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BusinessException(404, "用户不存在");
+        }
+        if (!oldPassword.equals(user.getPassword())) {
+            throw new BusinessException(400, "原密码错误");
+        }
+        if (newPassword == null || newPassword.length() < 6) {
+            throw new BusinessException(400, "新密码长度不能少于6位");
+        }
+        userMapper.updatePassword(userId, newPassword);
     }
 }

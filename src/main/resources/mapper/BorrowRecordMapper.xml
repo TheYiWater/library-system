@@ -43,4 +43,28 @@
         SET status = 1, return_time = NOW()
         WHERE id = #{id} AND user_id = #{userId} AND status = 0
     </update>
+
+    <select id="selectHotBooks" resultType="java.util.Map">
+        SELECT b.id AS bookId, b.title AS title, b.author AS author,
+        b.publisher AS publisher, b.stock AS stock, b.total AS total,
+        COUNT(br.id) AS borrowCount
+        FROM book b
+        LEFT JOIN borrow_record br ON b.id = br.book_id
+        GROUP BY b.id, b.title, b.author, b.publisher, b.stock, b.total
+        ORDER BY borrowCount DESC
+        LIMIT 10
+    </select>
+
+    <select id="selectAllWithBook" resultType="java.util.Map">
+        SELECT br.id, br.user_id, u.username, br.book_id, b.title, br.borrow_time, br.due_time, br.return_time, br.status
+        FROM borrow_record br
+        LEFT JOIN user u ON br.user_id = u.id
+        LEFT JOIN book b ON br.book_id = b.id
+        ORDER BY br.borrow_time DESC
+    </select>
+
+    <select id="count" resultType="int">SELECT COUNT(*) FROM borrow_record</select>
+    <select id="countOverdue" resultType="int">
+        SELECT COUNT(*) FROM borrow_record WHERE status = 0 AND due_time &lt; NOW()
+    </select>
 </mapper>

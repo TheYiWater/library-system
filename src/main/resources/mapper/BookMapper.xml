@@ -28,13 +28,33 @@
         VALUES(#{title}, #{author}, #{isbn}, #{categoryId}, #{publisher}, #{stock}, #{total})
     </insert>
 
+    <update id="update">
+        UPDATE book
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="author != null">author = #{author},</if>
+            <if test="isbn != null">isbn = #{isbn},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="publisher != null">publisher = #{publisher},</if>
+            <if test="stock != null">stock = #{stock},</if>
+            <if test="total != null">total = #{total},</if>
+            update_time = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
     <update id="updateStock">
         UPDATE book
         SET stock = stock + #{delta}
         WHERE id = #{id} AND stock + #{delta} >= 0
     </update>
 
+    <select id="count" resultType="int">SELECT COUNT(*) FROM book</select>
+    <select id="listAll" resultType="com.example.librarysystem.entity.Book">SELECT * FROM book</select>
     <delete id="deleteById">
         DELETE FROM book WHERE id = #{id}
     </delete>
+    <select id="selectAllIds" resultType="java.lang.Long">
+        SELECT id FROM book
+    </select>
 </mapper>

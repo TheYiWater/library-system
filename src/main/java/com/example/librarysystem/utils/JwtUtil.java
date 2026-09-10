@@ -2,39 +2,53 @@ package com.example.librarysystem.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.JWTVerifier;
-import java.util.Date;
 
 public class JwtUtil {
 
-    private static final String SECRET = "library-system-secret-key-2024";
-    private static final long EXPIRE = 1000 * 60 * 60 * 2; // 2 小时过期
+    private static final String SECRET = "library-system-secret-key";
+    private static final long EXPIRE = 7 * 24 * 60 * 60 * 1000L; // 7天
 
-    public static String generate(Long userId, String username, String role) {
+    /**
+     * 生成 Token
+     */
+    public static String generate(Long userId, String username, Integer role) {
         return JWT.create()
                 .withClaim("userId", userId)
                 .withClaim("username", username)
                 .withClaim("role", role)
-                .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRE))
+                .withIssuedAt(new java.util.Date())
+                .withExpiresAt(new java.util.Date(System.currentTimeMillis() + EXPIRE))
                 .sign(Algorithm.HMAC256(SECRET));
     }
 
+    /**
+     * 验证并解析 Token
+     */
     public static DecodedJWT verify(String token) {
         Algorithm algorithm = Algorithm.HMAC256(SECRET);
-        JWTVerifier verifier = JWT.require(algorithm).build();
-        return verifier.verify(token);
+        return JWT.require(algorithm).build().verify(token);
     }
 
+    /**
+     * 从 Token 获取 userId
+     */
     public static Long getUserId(String token) {
         DecodedJWT jwt = verify(token);
         return jwt.getClaim("userId").asLong();
     }
 
-    public static String getRole(String token) {
+    /**
+     * 从 Token 获取 role
+     */
+    public static Integer getRole(String token) {
         DecodedJWT jwt = verify(token);
-        return jwt.getClaim("role").asString();
+        Object roleObj = jwt.getClaim("role").as(Object.class);
+        if (roleObj instanceof Integer) {
+            return (Integer) roleObj;
+        } else if (roleObj instanceof String) {
+            return "ADMIN".equals(roleObj) ? 1 : 0;
+        }
+        return 0;
     }
 }
